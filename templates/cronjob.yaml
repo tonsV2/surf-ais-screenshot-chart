@@ -1,0 +1,27 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "surf-ais-screenshot.fullname" . }}
+  labels:
+  {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.workerSchedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.workerSuccessfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.workerFailedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Chart.Name }}-worker
+              image: {{ .Values.workerImage.name | quote }}
+              imagePullPolicy: {{ .Values.workerImage.pullPolicy }}
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+          restartPolicy: Never
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ include "surf-ais-screenshot.fullname" . }}
+      backoffLimit: {{ .Values.workerBackoffLimit }}
