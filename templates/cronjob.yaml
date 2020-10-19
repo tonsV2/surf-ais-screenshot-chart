@@ -12,6 +12,13 @@ spec:
     spec:
       template:
         spec:
+          initContainers:
+            - name: {{ .Chart.Name }}-worker-init
+              image: busybox:1.32
+              command: [ 'sh', '-c', 'mkdir -p /data/uploads' ]
+              volumeMounts:
+                - name: data
+                  mountPath: /data
           containers:
             - name: {{ .Chart.Name }}-worker
               image: {{ .Values.workerImage.name | quote }}
