@@ -16,6 +16,19 @@ spec:
             - name: {{ .Chart.Name }}-worker
               image: {{ .Values.workerImage.name | quote }}
               imagePullPolicy: {{ .Values.workerImage.pullPolicy }}
+              env:
+                - name: SELENIUM_HOST
+                  value: {{ include "surf-ais-screenshot.fullname" . }}-selenium
+                - name: AIS_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: AIS_USERNAME
+                      name: {{ include "surf-ais-screenshot.fullname" . }}
+                - name: AIS_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      key: AIS_PASSWORD
+                      name: {{ include "surf-ais-screenshot.fullname" . }}
               volumeMounts:
                 - name: data
                   mountPath: /data

@@ -1,7 +1,7 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.nginx.ingress.enabled -}}
 {{- $fullName := include "surf-ais-screenshot.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- $tls := hasKey .Values.ingress "certIssuer" -}}
+{{- $svcPort := .Values.nginx.service.port -}}
+{{- $tls := hasKey .Values.nginx.ingress "certIssuer" -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
@@ -9,12 +9,12 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-nginx
   labels:
     {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
   annotations:
 {{- if $tls }}
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.certIssuer | quote }}
+    cert-manager.io/cluster-issuer: {{ .Values.nginx.ingress.certIssuer | quote }}
     ingress.kubernetes.io/ssl-redirect: "true"
 {{- end }}
 spec:
@@ -22,14 +22,14 @@ spec:
   tls:
     - secretName: {{ $fullName }}-tls
       hosts:
-        - {{ .Values.ingress.hostname | quote }}
+        - {{ .Values.nginx.ingress.hostname | quote }}
 {{- end }}
   rules:
-    - host: {{ .Values.ingress.hostname | quote }}
+    - host: {{ .Values.nginx.ingress.hostname | quote }}
       http:
         paths:
           - path: /
             backend:
-              serviceName: {{ $fullName }}
+              serviceName: {{ $fullName }}-nginx
               servicePort: {{ $svcPort }}
 {{- end }}

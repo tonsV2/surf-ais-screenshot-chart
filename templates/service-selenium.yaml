@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "surf-ais-screenshot.fullname" . }}-selenium
+  labels:
+    {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.selenium.service.type }}
+  ports:
+    - port: {{ .Values.selenium.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "surf-ais-screenshot.seleniumSelectorLabels" . | nindent 4 }}

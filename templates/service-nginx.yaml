@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "surf-ais-screenshot.fullname" . }}-nginx
+  labels:
+    {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.nginx.service.type }}
+  ports:
+    - port: {{ .Values.nginx.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "surf-ais-screenshot.nginxSelectorLabels" . | nindent 4 }}

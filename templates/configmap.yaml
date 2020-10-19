@@ -6,4 +6,4 @@ metadata:
   {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
 data:
   nginx-default.conf: |
-    {{ .Files.Get .Values.nginxDefaultConf | nindent 4 }}
+    {{ .Files.Get .Values.nginx.defaultConf | nindent 4 }}

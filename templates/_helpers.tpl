@@ -35,7 +35,8 @@ Common labels
 */}}
 {{- define "surf-ais-screenshot.labels" -}}
 helm.sh/chart: {{ include "surf-ais-screenshot.chart" . }}
-{{ include "surf-ais-screenshot.selectorLabels" . }}
+app.kubernetes.io/name: {{ include "surf-ais-screenshot.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,10 +44,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Nginx selector labels
 */}}
-{{- define "surf-ais-screenshot.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "surf-ais-screenshot.name" . }}
+{{- define "surf-ais-screenshot.nginxSelectorLabels" -}}
+app.kubernetes.io/name: {{ include "surf-ais-screenshot.name" . }}-nginx
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Selenium selector labels
+*/}}
+{{- define "surf-ais-screenshot.seleniumSelectorLabels" -}}
+app.kubernetes.io/name: {{ include "surf-ais-screenshot.name" . }}-selenium
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 

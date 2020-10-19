@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "surf-ais-screenshot.fullname" . }}-selenium
+  labels:
+    {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "surf-ais-screenshot.seleniumSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.selenium.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "surf-ais-screenshot.seleniumSelectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.selenium.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "surf-ais-screenshot.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.selenium.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-selenium
+          securityContext:
+            {{- toYaml .Values.selenium.securityContext | nindent 12 }}
+          image: {{ .Values.selenium.image.name | quote }}
+          imagePullPolicy: {{ .Values.selenium.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4444
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.selenium.resources | nindent 12 }}
+      {{- with .Values.selenium.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.selenium.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.selenium.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

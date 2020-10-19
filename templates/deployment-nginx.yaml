@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "surf-ais-screenshot.fullname" . }}
+  name: {{ include "surf-ais-screenshot.fullname" . }}-nginx
   labels:
     {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+{{- if not .Values.nginx.autoscaling.enabled }}
+  replicas: {{ .Values.nginx.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "surf-ais-screenshot.selectorLabels" . | nindent 6 }}
+      {{- include "surf-ais-screenshot.nginxSelectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
+    {{- with .Values.nginx.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "surf-ais-screenshot.selectorLabels" . | nindent 8 }}
+        {{- include "surf-ais-screenshot.nginxSelectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.nginx.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "surf-ais-screenshot.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.nginx.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-www
+        - name: {{ .Chart.Name }}-nginx
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ .Values.wwwImage.name | quote }}
-          imagePullPolicy: {{ .Values.wwwImage.pullPolicy }}
+            {{- toYaml .Values.nginx.securityContext | nindent 12 }}
+          image: {{ .Values.nginx.image.name | quote }}
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           volumeMounts:
             - name: data
               mountPath: /usr/share/nginx/html
@@ -53,7 +53,7 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.nginx.resources | nindent 12 }}
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -64,15 +64,15 @@ spec:
             items:
               - key: nginx-default.conf
                 path: default.conf
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.nginx.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.nginx.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.nginx.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

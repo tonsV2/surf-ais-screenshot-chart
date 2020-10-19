@@ -7,22 +7,17 @@ workerSuccessfulJobsHistoryLimit: 1
 workerFailedJobsHistoryLimit: 1
 workerBackoffLimit: 2
 
-nginxDefaultConf: includes/etc/nginx/conf.d/default.conf
+ais:
+  username: username
+  password: password
 
 volume:
   size: 100M
-
-replicaCount: 1
-
-wwwImage:
-  name: nginxinc/nginx-unprivileged:1.18
-  pullPolicy: IfNotPresent
 
 workerImage:
   name: tons/surf-ais-screenshot:1.0.0
   pullPolicy: IfNotPresent
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -35,49 +30,70 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
-
-podSecurityContext: {}
+nginx:
+  defaultConf: includes/etc/nginx/conf.d/default.conf
+  image:
+    name: nginxinc/nginx-unprivileged:1.18
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    hostname: surf-ais-screenshot.127.0.0.1.nip.io
+    #  certIssuer: letsencrypt-staging | letsencrypt-prod
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  replicaCount: 1
+  podAnnotations: {}
+  imagePullSecrets: []
+  podSecurityContext: { }
   # fsGroup: 2000
+  securityContext: { }
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 8080
-
-ingress:
-  enabled: true
-  hostname: surf-ais-screenshot.127.0.0.1.nip.io
-#  certIssuer: letsencrypt-staging | letsencrypt-prod
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+selenium:
+  image:
+    name: selenium/standalone-chrome:4.0.0
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4444
+  podAnnotations: {}
+  imagePullSecrets: []
+  podSecurityContext: {}
+  # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
