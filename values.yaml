@@ -7,9 +7,9 @@ workerSuccessfulJobsHistoryLimit: 1
 workerFailedJobsHistoryLimit: 1
 workerBackoffLimit: 2
 
-ais:
-  username: username
-  password: password
+ais: {}
+#  username: username
+#  password: password
 
 volume:
   size: 100M
