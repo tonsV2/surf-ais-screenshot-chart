@@ -58,6 +58,7 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "surf-ais-screenshot.fullname" . }}
+            readOnly: true
         - name: configmap-nginx
           configMap:
             name: {{ include "surf-ais-screenshot.fullname" . }}
