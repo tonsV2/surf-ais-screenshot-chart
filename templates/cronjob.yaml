@@ -5,9 +5,9 @@ metadata:
   labels:
   {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
 spec:
-  schedule: {{ .Values.workerSchedule | quote }}
-  successfulJobsHistoryLimit: {{ .Values.workerSuccessfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ .Values.workerFailedJobsHistoryLimit }}
+  schedule: {{ .Values.job.schedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.job.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.job.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       template:
@@ -21,8 +21,8 @@ spec:
                   mountPath: /data
           containers:
             - name: {{ .Chart.Name }}-worker
-              image: {{ .Values.workerImage.name | quote }}
-              imagePullPolicy: {{ .Values.workerImage.pullPolicy }}
+              image: {{ .Values.job.image.name | quote }}
+              imagePullPolicy: {{ .Values.job.image.pullPolicy }}
               env:
                 - name: SELENIUM_HOST
                   value: {{ include "surf-ais-screenshot.fullname" . }}-selenium
@@ -44,4 +44,4 @@ spec:
             - name: data
               persistentVolumeClaim:
                 claimName: {{ include "surf-ais-screenshot.fullname" . }}
-      backoffLimit: {{ .Values.workerBackoffLimit }}
+      backoffLimit: {{ .Values.job.backoffLimit }}

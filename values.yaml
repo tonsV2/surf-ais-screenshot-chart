@@ -2,11 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-workerSchedule: 0 * * * *
-workerSuccessfulJobsHistoryLimit: 1
-workerFailedJobsHistoryLimit: 1
-workerBackoffLimit: 2
-
 ais: {}
 #  username: username
 #  password: password
@@ -14,12 +9,17 @@ ais: {}
 volume:
   size: 100M
 
-workerImage:
-  name: tons/surf-ais-screenshot:1.0.0
-  pullPolicy: IfNotPresent
-
 nameOverride: ""
 fullnameOverride: ""
+
+job:
+  schedule: 0 * * * *
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  backoffLimit: 2
+  image:
+    name: tons/surf-ais-screenshot:1.0.0
+    pullPolicy: IfNotPresent
 
 serviceAccount:
   # Specifies whether a service account should be created
