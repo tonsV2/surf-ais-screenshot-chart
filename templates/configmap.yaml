@@ -7,3 +7,5 @@ metadata:
 data:
   nginx-default.conf: |
     {{ .Files.Get .Values.nginx.defaultConf | nindent 4 }}
+  nginx-index.html: |
+    {{ .Files.Get .Values.nginx.indexHtml | nindent 4 }}

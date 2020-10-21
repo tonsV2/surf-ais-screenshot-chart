@@ -27,6 +27,16 @@ spec:
       serviceAccountName: {{ include "surf-ais-screenshot.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.nginx.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ .Chart.Name }}-nginx-init
+          image: busybox:1.32
+          command: [ 'sh', '-c', 'cp /tmp/html/index.html /data/index.html' ]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: configmap-nginx-index-html
+              mountPath: /tmp/html
+              readOnly: true
       containers:
         - name: {{ .Chart.Name }}-nginx
           securityContext:
@@ -58,13 +68,20 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "surf-ais-screenshot.fullname" . }}
-            readOnly: true
+# This can't be enabled as long as the init container is writing to this volume
+#            readOnly: true
         - name: configmap-nginx
           configMap:
             name: {{ include "surf-ais-screenshot.fullname" . }}
             items:
               - key: nginx-default.conf
                 path: default.conf
+        - name: configmap-nginx-index-html
+          configMap:
+            name: {{ include "surf-ais-screenshot.fullname" . }}
+            items:
+              - key: nginx-index.html
+                path: index.html
       {{- with .Values.nginx.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

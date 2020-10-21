@@ -32,6 +32,7 @@ serviceAccount:
   name: ""
 
 nginx:
+  indexHtml: includes/index.html
   defaultConf: includes/etc/nginx/conf.d/default.conf
   image:
     name: nginxinc/nginx-unprivileged:1.18
