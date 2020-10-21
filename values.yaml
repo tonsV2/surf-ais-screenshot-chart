@@ -86,7 +86,10 @@ selenium:
   imagePullSecrets: []
   podSecurityContext: {}
   # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    capabilities:
+      add:
+        - SYS_ADMIN
     # capabilities:
     #   drop:
     #   - ALL
