@@ -20,7 +20,7 @@ job:
   image:
     name: tons/surf-ais-screenshot:1.1.0
     pullPolicy: IfNotPresent
-  outputPath: /data/uploads/screenshot.png
+  outputPath: /data/uploads/ais_screenshot.png
 
 serviceAccount:
   # Specifies whether a service account should be created
