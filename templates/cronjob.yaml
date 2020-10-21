@@ -15,7 +15,7 @@ spec:
           initContainers:
             - name: {{ .Chart.Name }}-worker-init
               image: busybox:1.32
-              command: [ 'sh', '-c', 'mkdir -p /data/uploads' ]
+              command: [ 'sh', '-c', 'mkdir -p /data/uploads && touch {{ .Values.job.outputPath }} && chmod ugo+w {{ .Values.job.outputPath }}' ]
               volumeMounts:
                 - name: data
                   mountPath: /data
@@ -24,6 +24,8 @@ spec:
               image: {{ .Values.job.image.name | quote }}
               imagePullPolicy: {{ .Values.job.image.pullPolicy }}
               env:
+                - name: OUTPUT_PATH
+                  value: {{ .Values.job.outputPath }}
                 - name: SELENIUM_HOST
                   value: {{ include "surf-ais-screenshot.fullname" . }}-selenium
                 - name: AIS_USER
