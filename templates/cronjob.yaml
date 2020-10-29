@@ -1,7 +1,8 @@
+{{- $fullname := include "surf-ais-screenshot.fullname" . -}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ include "surf-ais-screenshot.fullname" . }}
+  name: {{ $fullname }}
   labels:
   {{- include "surf-ais-screenshot.labels" . | nindent 4 }}
 spec:
@@ -27,17 +28,17 @@ spec:
                 - name: OUTPUT_PATH
                   value: {{ .Values.job.outputPath }}
                 - name: SELENIUM_HOST
-                  value: {{ include "surf-ais-screenshot.fullname" . }}-selenium
+                  value: {{ $fullname }}-selenium
                 - name: AIS_USER
                   valueFrom:
                     secretKeyRef:
                       key: AIS_USERNAME
-                      name: {{ include "surf-ais-screenshot.fullname" . }}
+                      name: {{ $fullname }}
                 - name: AIS_PASS
                   valueFrom:
                     secretKeyRef:
                       key: AIS_PASSWORD
-                      name: {{ include "surf-ais-screenshot.fullname" . }}
+                      name: {{ $fullname }}
               volumeMounts:
                 - name: data
                   mountPath: /data
@@ -45,5 +46,5 @@ spec:
           volumes:
             - name: data
               persistentVolumeClaim:
-                claimName: {{ include "surf-ais-screenshot.fullname" . }}
+                claimName: {{ $fullname }}
       backoffLimit: {{ .Values.job.backoffLimit }}
