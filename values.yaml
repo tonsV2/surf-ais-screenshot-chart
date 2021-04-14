@@ -18,7 +18,7 @@ job:
   failedJobsHistoryLimit: 1
   backoffLimit: 2
   image:
-    name: tons/surf-ais-screenshot:1.1.0
+    name: tons/surf-ais-screenshot:1.2.0
     pullPolicy: IfNotPresent
   outputPath: /data/uploads/ais_screenshot.png
 
@@ -84,6 +84,9 @@ selenium:
   service:
     type: ClusterIP
     port: 4444
+  screen:
+    width: 1920
+    height: 1080
   podAnnotations: {}
   imagePullSecrets: []
   podSecurityContext: {}
